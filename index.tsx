@@ -8,43 +8,46 @@ import * as ReactDOM from "react-dom";
 
 */
 function CustomerApp() {
-  const [customers, setCustomers] = React.useState([
-    { firstName: "Jennifer", lastName: "Andersson", id: 1 },
-    { firstName: "Anna", lastName: "Bengtsson", id: 2 },
-    { firstName: "David", lastName: "Bergwall", id: 3 },
-  ]);
   const [dummyState, setDummyState] = React.useState(0);
 
+  const [ugglyWrapper, setUgglyWrapper] = React.useState({
+    sortOrder: "asc",
+    sortBy: "firstName",
+    customers: [
+      { firstName: "Jennifer", lastName: "Andersson", id: 1 },
+      { firstName: "Anna", lastName: "Bengtsson", id: 2 },
+      { firstName: "David", lastName: "Bergwall", id: 3 },
+    ],
+  });
+
   const onChange = (customer) => {
-    /* 
-      //Poor mans version, just change any state and the component will re-render 
-      setDummyState(Date.now());
- 
-      */
+    //Poor mans version, just change any state and the component will re-render
+    setDummyState(Date.now());
 
-      /* set state can be invoked with a function as argument, the functions first argument is the previous state */
-      /* the reason the component re-renders is actually that we change the reference of the value of state 'customers' */
+    /* set state can be invoked with a function as argument, the functions first argument is the previous state */
+    /* the reason the component re-renders is actually that we change the reference of the value of state 'customers' */
 
-    setCustomers((oldCustomers) => {
+    /*    setCustomers((oldCustomers) => {
       const obj = oldCustomers.find((c) => c.id === customer.id);
       const index = oldCustomers.indexOf(obj); 
       oldCustomers[index] = customer;
       //create a new object/reference by using a retarted map
       const newCustomers = oldCustomers.map((c) => c);
       return newCustomers;
-    });
+    });*/
   };
 
-  return <CustomersList customers={customers} onChange={onChange} />;
+  return <CustomersList ugglyWrapper={ugglyWrapper} onChange={onChange} />;
 }
 
-function CustomersList({ customers, onChange }) {
-  const [sortBy, setSortBy] = React.useState("lastName");
+function CustomersList({ ugglyWrapper, onChange }) {
+  const sortBy = ugglyWrapper.sortBy;
   const s = (event) => {
-    setSortBy(event.target.value);
+    ugglyWrapper.sortBy = event.target.value;
+    onChange({});
   };
 
-  const sorted = customers.sort(function (a, b) {
+  const sorted = ugglyWrapper.customers.sort(function (a, b) {
     if (a[sortBy] > b[sortBy]) {
       return 1;
     }
@@ -73,7 +76,7 @@ function CustomersList({ customers, onChange }) {
           ))}
         </tbody>
       </table>
-      <pre>{JSON.stringify(customers, null, 4)}</pre>
+      <pre>{JSON.stringify(ugglyWrapper.customers, null, 4)}</pre>
     </div>
   );
 }
