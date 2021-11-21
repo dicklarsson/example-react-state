@@ -10,6 +10,8 @@ import * as ReactDOM from "react-dom";
 function CustomerApp() {
   const [dummyState, setDummyState] = React.useState(0);
 
+  const time = useDagge();
+
   const [ugglyWrapper, setUgglyWrapper] = React.useState({
     sortOrder: "asc",
     sortBy: "firstName",
@@ -37,7 +39,11 @@ function CustomerApp() {
     });*/
   };
 
-  return <CustomersList ugglyWrapper={ugglyWrapper} onChange={onChange} />;
+  return (
+    <div>
+      {time} <CustomersList ugglyWrapper={ugglyWrapper} onChange={onChange} />
+    </div>
+  );
 }
 
 function CustomersList({ ugglyWrapper, onChange }) {
@@ -98,6 +104,22 @@ function CustomersListItem({ customer, onChange }) {
       </td>
     </tr>
   );
+}
+
+function useDagge() {
+  const [time, setTime] = React.useState(Date.now());
+
+  React.useEffect(() => {
+    const work = () => {
+      setTime(Date.now());
+    };
+    const interval = setInterval(work, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  });
+  return time;
 }
 
 ReactDOM.render(<CustomerApp />, document.getElementById("app"));
